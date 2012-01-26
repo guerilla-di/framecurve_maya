@@ -18,3 +18,7 @@ to this:
 ![Timewarped graph](framecurve_maya/raw/master/images/fc_maya_modified_hyper.png)
 
 The main curve that now feeds the other curves will contain the Framecurve animation.
+
+## License
+
+The scripts here are covered with [framecurve license](http://framecurve.org/scripts/#license).
