@@ -1,7 +1,7 @@
 # Framecurve Maya MEL script
 
 First of all, you will need our MEL file that you will need to source.
-[Download the .mel](scripts/framecurveApplyTimewarp.mel)
+[Download the .mel](framecurve_maya/raw/master/scripts/framecurveApplyTimewarp.mel)
 
 Select an object in Maya, execute the script function **framecurve.timewarpDialog()**.
 A dialog will pop out prompting you to select your framecurve file and the object to timewarp.
