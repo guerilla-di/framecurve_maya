@@ -61,40 +61,6 @@ proc int framecurve.stringIgnored(string $str) {
     return 0;
 }
 
-// Disable or enable image planes in the viewport. 0 disable, 1 enable
-// http://www.vfxoverflow.com/questions/716/suspending-viewport-updates-when-creating-keyframes-via-mel
-proc string[] framecurve.toggleImagePlanes(int $mode) {
-    string $result[];
-    string $imagePlanes[] = `ls -type "imagePlane"`;
-    for ($ip in $imagePlanes) {
-        if ($mode) {
-            if (`attributeQuery -n $ip -ex "imageNameStash"`)   {
-                string $path = `getAttr ($ip+".imageNameStash")`;
-                setAttr -type "string" ($ip + ".imageName")  $path;
-                deleteAttr ($ip + ".imageNameStash");
-            } else {
-            //  warning("this image plane was never disabled");
-            }
-        } else {
-            if (! `attributeQuery -n $ip -ex "imageNameStash"`) {
-                addAttr -ln  "imageNameStash" -dt "string" $ip;
-            }
-            string $path = `getAttr ($ip+".imageName")`;
-            setAttr -type "string" ($ip + ".imageName") "";
-            setAttr -type "string" ($ip + ".imageNameStash") $path;
-        }
-        $result[`size $result`] = $ip;
-    }
-    return $result;
-}
-
-global proc string[] framecurve.enableImagePlanes() {
-     return framecurve.toggleImagePlanes(1);
-}
-global proc string[] framecurve.disableImagePlanes() {
-     return framecurve.toggleImagePlanes(0);
-}
-
 global proc framecurve.applyCurve(string $tCurve, string $toObject) {
 	$warpConnections = `listConnections -t animCurve $toObject`;
 	
@@ -123,8 +89,6 @@ global proc framecurve.applyCurve(string $tCurve, string $toObject) {
 			$imagePlanes = `listConnections -type "imagePlane" $shape`;
 			for ($plane in $imagePlanes) {
 				print("Applying timewarp curve to the camera shape of " + $shape + "\n");
-				//
-				
 				// resultCurveTimeToUnitless will be inserted as adapter
 				print("Retiming image plane " + $plane + "\n");
 				print(`connectAttr -f ($tCurve + ".output") ($plane + ".frameExtension")` + "\n");
@@ -151,9 +115,6 @@ global proc framecurve.applyTimewarp() {
 	int $frameNo = 0;
 	string $toks[];
 	
-	// To make viewport updates faster when we iterate through frames it makes sense to
-	// disable the image planes
-	framecurve.disableImagePlanes();
 	while(`feof $fId` == 0) {
 		$line = `fgetline $fId`;
 		// Skip comment lines
@@ -161,10 +122,10 @@ global proc framecurve.applyTimewarp() {
 			tokenize($line, $toks);
 			int $frameNo = $toks[0];
 			float $frameValue = $toks[1];
-			currentTime $frameNo;
 			setAttr ($timeNode + ".outTime") $frameValue;
+			
 			// Framecurve spec enforces LINEAR interpolation!
-			setKeyframe  -inTangentType "linear" -outTangentType "linear" ($timeNode + ".outTime");
+			setKeyframe  -time $frameNo -inTangentType "linear" -outTangentType "linear" ($timeNode + ".outTime");
 		}
 	}
 	fclose $fId;
@@ -173,9 +134,6 @@ global proc framecurve.applyTimewarp() {
 	setInfinity -pri constant;
     setInfinity -poi constant;
     
-	// And reenable them
-	framecurve.enableImagePlanes();
-	
 	// Now we have a curve we can actually use
 	string $driverCurves[] = `listConnections -t animCurve $timeNode`;
 	string $frameCurve = $driverCurves[0];
