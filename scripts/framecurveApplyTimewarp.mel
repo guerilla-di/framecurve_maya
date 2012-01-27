@@ -155,4 +155,4 @@ global proc framecurve.applyTimewarp() {
 }
 
 
-framecurve.timewarpDialog();
+//framecurve.timewarpDialog();
