@@ -1,15 +1,15 @@
 /*
-    
-    framecurve MEL script by Sebastian van Hesteren, Koen Hofmeester and Julik Tarkhanov.
-    Body and soul of the framecurve concept.
-    For more info, see http://framecurve.org
-    
-    Framecurve scripts are subject to MIT license
-    http://framecurve.org/scripts/#license
-    
-    Usage: in File put a framecurve text file. In Object put object whose animation curves will be timewarped
-    
-    run with: framecurve.timewarpDialog()
+	
+	framecurve MEL script by Sebastian van Hesteren, Koen Hofmeester and Julik Tarkhanov.
+	Body and soul of the framecurve concept.
+	For more info, see http://framecurve.org
+	
+	Framecurve scripts are subject to MIT license
+	http://framecurve.org/scripts/#license
+	
+	Usage: in File put a framecurve text file. In Object put object whose animation curves will be timewarped
+	
+	run with: framecurve.timewarpDialog()
 
 */
 
@@ -20,13 +20,13 @@ global proc framecurve.timewarpDialog() {
 	}
 	window -title "Apply framecurve timewarp" -s 0 -wh 300 150 shTimeWarperWin;
 	string $form = `formLayout`;
-	string $textbutFile  = `textFieldButtonGrp -cw 1 50 -label "File: " -buttonLabel "Browse" -buttonCommand "framecurve.getFile" framecurveFileField`;
-	string $textbutCam  = `textFieldButtonGrp -cw 1 50 -label "Object: " -buttonLabel "Get" -buttonCommand "string $sel[] = `ls -sl`; textFieldGrp -e -tx $sel[0] framecurveDestinationObjectField;" framecurveDestinationObjectField`;
+	string $textbutFile	 = `textFieldButtonGrp -cw 1 50 -label "File: " -buttonLabel "Browse" -buttonCommand "framecurve.getFile" framecurveFileField`;
+	string $textbutCam	= `textFieldButtonGrp -cw 1 50 -label "Object: " -buttonLabel "Get selected" -buttonCommand "string $sel[] = `ls -sl`; textFieldGrp -e -tx $sel[0] framecurveDestinationObjectField;" framecurveDestinationObjectField`;
 	string $butWarp = `button -label "Apply" -command "framecurve.applyTimewarp"`;
 	
 
 	formLayout -edit
-	    -attachForm $textbutFile "top" 2
+		-attachForm $textbutFile "top" 2
 		-attachForm $textbutFile "left" 2
 		-attachForm $textbutFile "right" 10
 		-attachForm $textbutCam "left" 2
@@ -44,21 +44,22 @@ global proc framecurve.timewarpDialog() {
 }
 
 global proc framecurve.getFile() {
-    string $fileList = "*.framecurve.txt";
-    
+	string $fileList = "*.framecurve.txt";
+	
 	if (getApplicationVersionAsFloat() >= 2011) {
-		textFieldButtonGrp -e -tx `fileDialog2 -ff $fileList -fm 1` framecurveFileField;
+		string $multipleFilters = "Curve File (*.framecurve.txt);;All Files (*.*)";
+		textFieldButtonGrp -e -tx `fileDialog2 -fileFilter $multipleFilters -selectFileFilter "Curve File" -fm 1` framecurveFileField;
 	} else {
-	    string $loadfile = `fileDialog -t "Get Warp File" -dm $fileList -m 0`;
-	    textFieldButtonGrp -e -tx $loadfile framecurveFileField;
+		string $loadfile = `fileDialog -t "Get Warp File" -dm $fileList -m 0`;
+		textFieldButtonGrp -e -tx $loadfile framecurveFileField;
 	}
 }
 
 // Check if the string is not a comment and not empty
 proc int framecurve.stringIgnored(string $str) {
-    if (size($str) == 0) return 1;
-    if (startsWith($str, "#")) return 1;
-    return 0;
+	if (size($str) == 0) return 1;
+	if (startsWith($str, "#")) return 1;
+	return 0;
 }
 
 global proc framecurve.applyCurve(string $tCurve, string $toObject) {
@@ -99,8 +100,18 @@ global proc framecurve.applyCurve(string $tCurve, string $toObject) {
 
 global proc framecurve.applyTimewarp() {
 	string $warpConnections[];
+	
+	string $warpFilePath;
+	string $warpObject;
+	
 	string $warpFilePath = `textFieldGrp -q -tx framecurveFileField`;
 	string $warpObject = `textFieldGrp -q -tx framecurveDestinationObjectField`;
+	
+	$warpObject = `textFieldGrp -q -tx framecurveDestinationObjectField`;
+	$warpFilePath = `textFieldGrp -q -tx framecurveFileField`;
+	if ($warpFilePath == "" || $warpObject == "") {
+		error "Please fill in both fields.";
+	}
 	
 	// Create a Time node and animate it. This is the only node that has a AnimCurveTT as
 	// it's animation curve and this is THE curve type we need to connect to other curve's input
@@ -125,15 +136,15 @@ global proc framecurve.applyTimewarp() {
 			setAttr ($timeNode + ".outTime") $frameValue;
 			
 			// Framecurve spec enforces LINEAR interpolation!
-			setKeyframe  -time $frameNo -inTangentType "linear" -outTangentType "linear" ($timeNode + ".outTime");
+			setKeyframe	 -time $frameNo -inTangentType "linear" -outTangentType "linear" ($timeNode + ".outTime");
 		}
 	}
 	fclose $fId;
 	
 	// Constant extrapolation
 	setInfinity -pri constant;
-    setInfinity -poi constant;
-    
+	setInfinity -poi constant;
+	
 	// Now we have a curve we can actually use
 	string $driverCurves[] = `listConnections -t animCurve $timeNode`;
 	string $frameCurve = $driverCurves[0];
@@ -144,4 +155,4 @@ global proc framecurve.applyTimewarp() {
 }
 
 
-//framecurve.timewarpDialog();
+framecurve.timewarpDialog();
