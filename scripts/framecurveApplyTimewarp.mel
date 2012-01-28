@@ -133,10 +133,8 @@ global proc framecurve.applyTimewarp() {
 			tokenize($line, $toks);
 			int $frameNo = $toks[0];
 			float $frameValue = $toks[1];
-			setAttr ($timeNode + ".outTime") $frameValue;
-			
-			// Framecurve spec enforces LINEAR interpolation!
-			setKeyframe	 -time $frameNo -inTangentType "linear" -outTangentType "linear" ($timeNode + ".outTime");
+			// Framecurve spec enforces LINEAR interpolation
+			setKeyframe -time $frameNo -value $frameValue -inTangentType "linear" -outTangentType "linear" ($timeNode + ".outTime");
 		}
 	}
 	fclose $fId;
