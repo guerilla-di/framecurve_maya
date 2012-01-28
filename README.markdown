@@ -5,7 +5,7 @@ First of all, you will need our MEL file that you will need to source.
 
 	source applyFramecurveTimewarp
 
-You can also create a shelf button with a binging to the function **framecurve.timewarpDialog()**.
+You can also create a shelf button with a binding to the function **framecurve.timewarpDialog()**.
 
 A dialog will pop out prompting you to select your framecurve file and the object to timewarp.
 Select a file and then hit the **Get** button to select the object you are going to timewarp.
