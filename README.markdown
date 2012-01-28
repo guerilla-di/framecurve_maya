@@ -1,7 +1,10 @@
 # Framecurve Maya MEL script
 
 First of all, you will need our MEL file that you will need to source.
+
 [Download the .mel](framecurve_maya/raw/master/scripts/applyFramecurveTimewarp.mel)
+
+Put it into your maya scripts directory so it's ready to roll.
 
 	source applyFramecurveTimewarp
 
