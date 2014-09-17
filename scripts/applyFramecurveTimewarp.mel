@@ -18,7 +18,7 @@ global proc framecurve.timewarpDialog() {
 	if (`window -ex shTimeWarperWin`){
 		deleteUI shTimeWarperWin;
 	}
-	window -title "Apply framecurve timewarp" -s 0 -wh 300 150 shTimeWarperWin;
+	window -title "Apply framecurve timewarp" -s 1 -wh 400 150 shTimeWarperWin;
 	string $form = `formLayout`;
 	string $textbutFile	 = `textFieldButtonGrp -cw 1 50 -label "File: " -buttonLabel "Browse" -buttonCommand "framecurve.getFile" framecurveFileField`;
 	string $textbutCam	= `textFieldButtonGrp -cw 1 50 -label "Object: " -buttonLabel "Get selected" -buttonCommand "string $sel[] = `ls -sl`; textFieldGrp -e -tx $sel[0] framecurveDestinationObjectField;" framecurveDestinationObjectField`;
