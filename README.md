@@ -13,15 +13,15 @@ You can also create a shelf button with a binding to the function **framecurve.t
 A dialog will pop out prompting you to select your framecurve file and the object to timewarp.
 Select a file and then hit the **Get** button to select the object you are going to timewarp.
 
-![Pick objects](framecurve_maya/raw/master/images/fc_maya_pick.png)
+![Pick objects](images/fc_maya_pick.png)
 
 Activate the dialog, and your Hypergraph hierarchy will transform from this:
 
-![Standard hypergraph without timewarp](framecurve_maya/raw/master/images/fc_maya_hyper.png)
+![Standard hypergraph without timewarp](images/fc_maya_hyper.png)
 
 to this:
 
-![Timewarped graph](framecurve_maya/raw/master/images/fc_maya_modified_hyper.png)
+![Timewarped graph](images/fc_maya_modified_hyper.png)
 
 The main curve that now feeds the other curves will contain the Framecurve animation.
 
